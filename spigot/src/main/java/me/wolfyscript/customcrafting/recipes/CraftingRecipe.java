@@ -153,21 +153,6 @@ public abstract class CraftingRecipe<C extends CraftingRecipe<C, S>, S extends C
         return ingredients;
     }
 
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public void removeMatrix(Inventory inventory, int totalAmount, CraftingData craftingData) {
-        removeMatrix(null, inventory, totalAmount, craftingData);
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public void removeMatrix(@Nullable Player player, @Nullable Inventory inventory, int totalAmount, CraftingData craftingData) {
-        craftingData.getNonNullIngredients().forEach((data) -> {
-            var item = data.customItem();
-            if (item != null) {
-                item.remove(data.itemStack(), totalAmount, inventory, player, player != null ? player.getLocation() : null, data.ingredient().isReplaceWithRemains());
-            }
-        });
-    }
-
     public ItemStack[] shrinkMatrix(@Nullable Player player, @Nullable Inventory inventory, int totalAmount, CraftingData craftingData, int gridDimension) {
         ItemStack[] matrix = new ItemStack[gridDimension * gridDimension];
         craftingData.getNonNullIngredients().forEach((data) -> matrix[data.matrixSlot()] = data.reference().shrink(data.itemStack(), totalAmount, data.ingredient().isReplaceWithRemains(), inventory, player, null));

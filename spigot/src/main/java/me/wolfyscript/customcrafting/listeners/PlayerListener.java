@@ -23,7 +23,6 @@
 package me.wolfyscript.customcrafting.listeners;
 
 import me.wolfyscript.customcrafting.CustomCrafting;
-import me.wolfyscript.customcrafting.configs.custom_data.RecipeBookData;
 import me.wolfyscript.customcrafting.configs.customitem.RecipeBookSettings;
 import me.wolfyscript.customcrafting.utils.ItemLoader;
 import me.wolfyscript.customcrafting.utils.PlayerUtil;
@@ -68,13 +67,6 @@ public class PlayerListener implements Listener {
                     event.setCancelled(true);
                     event.getPlayer().closeInventory();
                     PlayerUtil.openRecipeBook(event.getPlayer());
-                } else {
-                    RecipeBookData knowledgeBook = (RecipeBookData) customItem.getCustomData(CustomCrafting.RECIPE_BOOK_DATA);
-                    if (knowledgeBook != null && knowledgeBook.isEnabled()) {
-                        event.setCancelled(true);
-                        event.getPlayer().closeInventory();
-                        PlayerUtil.openRecipeBook(event.getPlayer());
-                    }
                 }
             }
         }

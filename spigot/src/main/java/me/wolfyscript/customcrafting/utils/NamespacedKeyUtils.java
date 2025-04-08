@@ -22,13 +22,7 @@
 
 package me.wolfyscript.customcrafting.utils;
 
-import me.wolfyscript.utilities.api.WolfyUtilCore;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.world.BlockCustomItemStore;
-import me.wolfyscript.utilities.util.world.WorldUtils;
-import org.bukkit.Location;
-import org.bukkit.block.Block;
 
 import java.util.Collection;
 import java.util.List;
@@ -157,25 +151,6 @@ public class NamespacedKeyUtils {
 
     public static List<NamespacedKey> getPartialMatches(String token, Collection<NamespacedKey> originals) {
         return originals.stream().filter(nKey -> partiallyMatches(token, nKey)).collect(Collectors.toList());
-    }
-
-    public static CustomItem getCustomItem(Block block) {
-        return getCustomItem(block.getLocation());
-    }
-
-    public static CustomItem getCustomItem(Location location) {
-        return getCustomItem(WorldUtils.getWorldCustomItemStore().get(location));
-    }
-
-    public static CustomItem getCustomItem(BlockCustomItemStore store) {
-        if (store != null) {
-            var customItem = store.getCustomItem();
-            if (customItem == null) {
-                customItem = WolfyUtilCore.getInstance().getRegistries().getCustomItems().get(fromInternal(store.getCustomItemKey()));
-            }
-            return customItem;
-        }
-        return null;
     }
 
 }

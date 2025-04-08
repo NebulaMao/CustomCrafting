@@ -22,8 +22,6 @@
 
 package me.wolfyscript.customcrafting.gui.item_creator.tabs;
 
-import me.wolfyscript.customcrafting.CustomCrafting;
-import me.wolfyscript.customcrafting.configs.custom_data.RecipeBookData;
 import me.wolfyscript.customcrafting.configs.customitem.RecipeBookSettings;
 import me.wolfyscript.customcrafting.data.CCCache;
 import me.wolfyscript.customcrafting.data.cache.items.Items;
@@ -53,9 +51,7 @@ public class TabRecipeBook extends ItemCreatorTab {
         creator.registerButton(new ButtonOption(Material.KNOWLEDGE_BOOK, this));
         creator.registerButton(
                 new ToggleButton<>("knowledge_book.toggle", (cache, guiHandler, player, guiInventory, i) ->
-                        cache.getItems().getItem().getData(RecipeBookSettings.class).map(RecipeBookSettings::isEnabled)
-                                // Get old recipe book settings
-                                .orElse(((RecipeBookData) cache.getItems().getItem().getCustomData(CustomCrafting.RECIPE_BOOK_DATA)).isEnabled()),
+                        cache.getItems().getItem().getData(RecipeBookSettings.class).map(RecipeBookSettings::isEnabled).orElse(false),
                         new ButtonState<>("knowledge_book.toggle.enabled", Material.GREEN_CONCRETE, (ItemsButtonAction) (cache, items, guiHandler, player, inventory, i, event) -> {
                             items.getItem().computeDataIfAbsent(RecipeBookSettings.class, id -> new RecipeBookSettings()).setEnabled(false);
                             return true;

@@ -23,8 +23,6 @@
 package me.wolfyscript.customcrafting.recipes.conditions;
 
 import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
-import me.wolfyscript.customcrafting.CustomCrafting;
-import me.wolfyscript.customcrafting.configs.custom_data.EliteWorkbenchData;
 import me.wolfyscript.customcrafting.configs.customitem.EliteCraftingTableSettings;
 import me.wolfyscript.customcrafting.recipes.CustomRecipe;
 import me.wolfyscript.customcrafting.recipes.RecipeType;
@@ -134,14 +132,8 @@ public class EliteWorkbenchCondition extends Condition<EliteWorkbenchCondition> 
                                                 condition.addEliteWorkbenches(namespacedKey);
                                                 return false;
                                             }
-                                            // Try the old elite crafting table settings
-                                            EliteWorkbenchData data = (EliteWorkbenchData) customItem.getCustomData(CustomCrafting.ELITE_CRAFTING_TABLE_DATA);
-                                            if (data != null && !data.isEnabled()) {
-                                                menu.sendMessage(guiHandler, menu.translatedMsgKey("not_elite_workbench"));
-                                                return true;
-                                            }
-                                            condition.addEliteWorkbenches(namespacedKey);
-                                            return false;
+                                            menu.sendMessage(guiHandler, menu.translatedMsgKey("not_elite_workbench"));
+                                            return true;
                                         }
                                     }
                                     menu.sendMessage(guiHandler, menu.translatedMsgKey("no_name"));
@@ -149,12 +141,9 @@ public class EliteWorkbenchCondition extends Condition<EliteWorkbenchCondition> 
                                 })
                                 .tabComplete((guiHandler, player, args) -> {
                                     Set<NamespacedKey> entries = api.getRegistries().getCustomItems().entrySet().stream()
-                                            .filter(entry -> entry.getValue().getData(EliteCraftingTableSettings.class).map(EliteCraftingTableSettings::isEnabled)
-                                                    // Read old elite crafting table data
-                                                    .orElseGet(() -> {
-                                                        EliteWorkbenchData data = (EliteWorkbenchData) entry.getValue().getCustomData(CustomCrafting.ELITE_CRAFTING_TABLE_DATA);
-                                                        return data != null && data.isEnabled();
-                                                    })).map(Map.Entry::getKey).collect(Collectors.toSet());
+                                            .filter(entry -> entry.getValue().getData(EliteCraftingTableSettings.class).map(EliteCraftingTableSettings::isEnabled).orElse(false))
+                                            .map(Map.Entry::getKey)
+                                            .collect(Collectors.toSet());
                                     if (args.length == 2) {
                                         return StringUtil.copyPartialMatches(args[1], entries.stream()
                                                 .filter(key -> key.getKeyComponent().getFolder().equals(args[0]))

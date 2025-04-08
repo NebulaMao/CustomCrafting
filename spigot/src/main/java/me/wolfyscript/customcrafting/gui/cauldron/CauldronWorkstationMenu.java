@@ -43,9 +43,6 @@ import me.wolfyscript.utilities.api.inventory.gui.GuiUpdate;
 import me.wolfyscript.utilities.api.inventory.gui.button.CallbackButtonRender;
 import me.wolfyscript.utilities.api.nms.inventory.GUIInventory;
 import me.wolfyscript.utilities.util.inventory.ItemUtils;
-import me.wolfyscript.utilities.util.reflection.InventoryUpdate;
-import me.wolfyscript.utilities.util.version.MinecraftVersion;
-import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryView;
@@ -162,14 +159,10 @@ public class CauldronWorkstationMenu extends CCWindow {
     }
 
     void updateTitle(GuiHandler<CCCache> guiHandler, Player player, GUIInventory<CCCache> inventory) {
-        if (ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0))) {
-            try {
-                player.getOpenInventory().setTitle(BukkitComponentSerializer.legacy().serialize(onUpdateTitle(player, inventory, guiHandler)));
-            } catch (IllegalArgumentException exception) {
-                // EMPTY! This shouldn't happen, just make sure to catch it.
-            }
-        } else {
-            InventoryUpdate.updateInventory(wolfyUtilities.getCore(), player, onUpdateTitle(player, inventory, guiHandler));
+        try {
+            player.getOpenInventory().setTitle(BukkitComponentSerializer.legacy().serialize(onUpdateTitle(player, inventory, guiHandler)));
+        } catch (IllegalArgumentException exception) {
+            // EMPTY! This shouldn't happen, just make sure to catch it.
         }
     }
 

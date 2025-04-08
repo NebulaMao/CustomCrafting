@@ -22,15 +22,12 @@
 
 package me.wolfyscript.customcrafting.listeners;
 
-import me.wolfyscript.customcrafting.CustomCrafting;
-import me.wolfyscript.customcrafting.configs.custom_data.EliteWorkbenchData;
+import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import me.wolfyscript.customcrafting.configs.customitem.EliteCraftingTableSettings;
 import me.wolfyscript.customcrafting.data.CCCache;
-import me.wolfyscript.customcrafting.utils.NamespacedKeyUtils;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.GuiHandler;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.world.WorldUtils;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -49,30 +46,21 @@ public class EliteWorkbenchListener implements Listener {
     public void onInteract(PlayerInteractEvent event) {
         if (!event.useInteractedBlock().equals(Event.Result.DENY) && event.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !event.getPlayer().isSneaking()) {
             var block = event.getClickedBlock();
-            if (block != null && WorldUtils.getWorldCustomItemStore().isStored(block.getLocation())) {
-                var customItem = NamespacedKeyUtils.getCustomItem(block);
-                if (customItem != null) {
-                    // New EliteCraftingTableSettings
-                    customItem.getData(EliteCraftingTableSettings.class).ifPresentOrElse(settings -> {
-                        if (settings.isEnabled()) {
-                            event.setCancelled(true);
-                            GuiHandler<CCCache> guiHandler = api.getInventoryAPI(CCCache.class).getGuiHandler(event.getPlayer());
-                            guiHandler.getCustomCache().getEliteWorkbench().setCustomItem(customItem);
-                            guiHandler.getCustomCache().getEliteWorkbench().setSettings(settings);
-                            guiHandler.openWindow(new NamespacedKey("crafting", "crafting_grid" + settings.getGridSize()));
-                        }
-                    }, () -> {
-                        // Old settings handled when new ones are not available
-                        var eliteCraftingTableData = (EliteWorkbenchData) customItem.getCustomData(CustomCrafting.ELITE_CRAFTING_TABLE_DATA);
-                        if (eliteCraftingTableData != null && eliteCraftingTableData.isEnabled()) {
-                            event.setCancelled(true);
-                            GuiHandler<CCCache> guiHandler = api.getInventoryAPI(CCCache.class).getGuiHandler(event.getPlayer());
-                            guiHandler.getCustomCache().getEliteWorkbench().setCustomItemAndData(customItem, eliteCraftingTableData.clone());
-                            guiHandler.openWindow(new NamespacedKey("crafting", "crafting_grid" + eliteCraftingTableData.getGridSize()));
-                        }
-                    });
-                }
+            if (block == null) {
+                return;
             }
+            api.getCore().getPersistentStorage().getOrCreateWorldStorage(block.getWorld()).getBlock(block.getLocation())
+                .flatMap(blockData -> blockData.getData(CustomItemBlockData.ID, CustomItemBlockData.class))
+                .flatMap(CustomItemBlockData::getCustomItem)
+                .ifPresent(customItem -> customItem.getData(EliteCraftingTableSettings.class).ifPresent(settings -> {
+                    if (settings.isEnabled()) {
+                        event.setCancelled(true);
+                        GuiHandler<CCCache> guiHandler = api.getInventoryAPI(CCCache.class).getGuiHandler(event.getPlayer());
+                        guiHandler.getCustomCache().getEliteWorkbench().setCustomItem(customItem);
+                        guiHandler.getCustomCache().getEliteWorkbench().setSettings(settings);
+                        guiHandler.openWindow(new NamespacedKey("crafting", "crafting_grid" + settings.getGridSize()));
+                    }
+                }));
         }
     }
 

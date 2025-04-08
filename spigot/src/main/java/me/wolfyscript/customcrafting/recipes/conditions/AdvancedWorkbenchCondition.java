@@ -22,11 +22,13 @@
 
 package me.wolfyscript.customcrafting.recipes.conditions;
 
+import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import me.wolfyscript.customcrafting.CustomCrafting;
 import me.wolfyscript.customcrafting.recipes.CraftingRecipe;
 import me.wolfyscript.customcrafting.recipes.CustomRecipe;
 import me.wolfyscript.customcrafting.recipes.RecipeType;
 import me.wolfyscript.customcrafting.utils.NamespacedKeyUtils;
+import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.Material;
 
@@ -45,8 +47,12 @@ public class AdvancedWorkbenchCondition extends Condition<AdvancedWorkbenchCondi
     public boolean check(CustomRecipe<?> recipe, Conditions.Data data) {
         if (recipe instanceof CraftingRecipe) {
             if (data.getBlock() != null) {
-                var customItem = NamespacedKeyUtils.getCustomItem(data.getBlock());
-                return customItem != null && (customItem.getNamespacedKey().equals(CustomCrafting.ADVANCED_CRAFTING_TABLE) || customItem.getNamespacedKey().equals(CustomCrafting.ADVANCED_WORKBENCH));
+                return WolfyUtilCore.getInstance().getPersistentStorage().getOrCreateWorldStorage(data.getBlock().getWorld())
+                    .getBlock(data.getBlock().getLocation())
+                    .flatMap(blockStorage -> blockStorage.getData(CustomItemBlockData.ID, CustomItemBlockData.class)
+                        .map(customItemData -> customItemData.getItem().equals(CustomCrafting.ADVANCED_WORKBENCH) || customItemData.getItem().equals(CustomCrafting.ADVANCED_CRAFTING_TABLE))
+                    )
+                    .orElse(false);
             }
             return false;
         }

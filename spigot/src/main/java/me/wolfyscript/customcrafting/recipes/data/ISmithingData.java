@@ -36,13 +36,4 @@ public interface ISmithingData<R extends CustomRecipe<?>> extends IRecipeData<R>
 
     Optional<StackReference> addition();
 
-    @Deprecated
-    CustomItem getTemplate();
-
-    @Deprecated
-    CustomItem getBase();
-
-    @Deprecated
-    CustomItem getAddition();
-
 }

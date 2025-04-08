@@ -30,8 +30,6 @@ import me.wolfyscript.customcrafting.commands.CommandRecipe;
 import me.wolfyscript.customcrafting.compatibility.PluginCompatibility;
 import me.wolfyscript.customcrafting.configs.DatabaseSettings;
 import me.wolfyscript.customcrafting.configs.LocalStorageSettings;
-import me.wolfyscript.customcrafting.configs.custom_data.EliteWorkbenchData;
-import me.wolfyscript.customcrafting.configs.custom_data.RecipeBookData;
 import me.wolfyscript.customcrafting.configs.customitem.EliteCraftingTableSettings;
 import me.wolfyscript.customcrafting.configs.customitem.RecipeBookSettings;
 import me.wolfyscript.customcrafting.data.CCCache;
@@ -80,7 +78,6 @@ import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.api.inventory.gui.InventoryAPI;
 import me.wolfyscript.utilities.util.NamespacedKey;
 import me.wolfyscript.utilities.util.Reflection;
-import me.wolfyscript.utilities.util.entity.CustomPlayerData;
 import me.wolfyscript.utilities.util.json.jackson.KeyedTypeIdResolver;
 import me.wolfyscript.utilities.util.version.MinecraftVersion;
 import me.wolfyscript.utilities.util.version.ServerVersion;
@@ -197,9 +194,6 @@ public class CustomCrafting extends JavaPlugin {
         ConfigurationSerialization.registerClass(LocalStorageSettings.class, "customcrafting:local_storage_settings");
 
         getLogger().info("Registering CustomItem Data");
-        var customItemData = api.getRegistries().getCustomItemData();
-        customItemData.register(new EliteWorkbenchData.Provider());
-        customItemData.register(new RecipeBookData.Provider());
 
         var customItemDataTypes = api.getRegistries().getCustomItemDataTypeRegistry();
         customItemDataTypes.register(RecipeBookSettings.class);
@@ -209,14 +203,15 @@ public class CustomCrafting extends JavaPlugin {
         var customBlockData = api.getRegistries().getCustomBlockData();
         customBlockData.register(CauldronBlockData.ID, CauldronBlockData.class);
 
+        var customPlayerData = api.getRegistries().getCustomPlayerData();
+        customPlayerData.register(CCPlayerData.class);
+
         getLogger().info("Registering Result Extensions");
         var resultExtensions = getRegistries().getRecipeResultExtensions();
         resultExtensions.register(new CommandResultExtension(this));
         resultExtensions.register(new MythicMobResultExtension());
         resultExtensions.register(new SoundResultExtension());
         resultExtensions.register(new ResultExtensionAdvancement());
-
-        CustomPlayerData.register(new CCPlayerData.Provider());
 
         getLogger().info("Registering Result Merge Adapters");
         var resultMergeAdapters = getRegistries().getRecipeMergeAdapters();

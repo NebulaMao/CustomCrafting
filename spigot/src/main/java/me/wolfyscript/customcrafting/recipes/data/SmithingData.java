@@ -24,15 +24,10 @@ package me.wolfyscript.customcrafting.recipes.data;
 
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
 import me.wolfyscript.customcrafting.recipes.CustomRecipeSmithing;
-import me.wolfyscript.utilities.api.inventory.custom_items.CustomItem;
-import me.wolfyscript.utilities.util.version.MinecraftVersion;
-import me.wolfyscript.utilities.util.version.ServerVersion;
 
 import java.util.Optional;
 
 public class SmithingData extends RecipeData<CustomRecipeSmithing> implements ISmithingData<CustomRecipeSmithing>{
-
-    private static final boolean IS_1_20 = ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0));
 
     public SmithingData(CustomRecipeSmithing recipe, IngredientData[] ingredients) {
         super(recipe, ingredients);
@@ -45,27 +40,12 @@ public class SmithingData extends RecipeData<CustomRecipeSmithing> implements IS
 
     @Override
     public Optional<StackReference> base() {
-        return bySlot(IS_1_20 ? 1 : 0).map(IngredientData::reference);
+        return bySlot(1).map(IngredientData::reference);
     }
 
     @Override
     public Optional<StackReference> addition() {
-        return bySlot(IS_1_20 ? 2 : 1).map(IngredientData::reference);
+        return bySlot(2).map(IngredientData::reference);
     }
 
-    @Deprecated
-    @Override
-    public CustomItem getTemplate() {
-        return getBySlot(0) == null ? null : getBySlot(0).customItem();
-    }
-
-    @Deprecated
-    public CustomItem getBase() {
-        return getBySlot(IS_1_20 ? 1 : 0).customItem();
-    }
-
-    @Deprecated
-    public CustomItem getAddition() {
-        return getBySlot(IS_1_20 ? 2 : 1).customItem();
-    }
 }

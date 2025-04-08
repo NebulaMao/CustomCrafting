@@ -215,21 +215,6 @@ public class ItemLoader {
         return reference;
     }
 
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public static CustomItem load(JsonNode node) {
-        return load(getObjectMapper().convertValue(node, APIReference.class));
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public static CustomItem load(APIReference reference) {
-        var customItem = CustomItem.of(reference);
-        if (customItem != null && customItem.hasNamespacedKey()) {
-            customItem = customItem.clone();
-            customItem.setAmount(reference.getAmount());
-        }
-        return customItem;
-    }
-
     public static void saveItem(NamespacedKey namespacedKey, CustomItem customItem) {
         saveItem(CustomCrafting.inst().getDataHandler().getActiveLoader(), namespacedKey, customItem);
     }

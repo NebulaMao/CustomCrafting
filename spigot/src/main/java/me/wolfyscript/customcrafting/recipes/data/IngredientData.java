@@ -40,22 +40,12 @@ import org.bukkit.inventory.ItemStack;
  */
 public record IngredientData(int matrixSlot, int recipeSlot, Ingredient ingredient, StackReference reference, ItemStack itemStack) {
 
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public IngredientData(int matrixSlot, int recipeSlot, Ingredient ingredient, CustomItem customItem, ItemStack itemStack) {
-         this(matrixSlot, recipeSlot, ingredient, fromCustomItem(customItem, itemStack), itemStack);
-    }
-
     private static StackReference fromCustomItem(CustomItem customItem, ItemStack itemStack) {
         if (customItem.hasNamespacedKey()) {
             // It's a saved CustomItem and bound to WU
             return new StackReference(WolfyUtilCore.getInstance(), new WolfyUtilsStackIdentifier(customItem.getNamespacedKey()), customItem.getWeight(), customItem.getAmount(), itemStack);
         }
         return customItem.stackReference();
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public CustomItem customItem() {
-        return CustomItem.of(reference.convert());
     }
 
 }

@@ -82,6 +82,9 @@ public class PlaceHolder extends PlaceholderExpansion {
             return "";
         }
         CCPlayerData playerData = PlayerUtil.getStore(p.getUniqueId());
+        if (playerData == null) {
+            return "";
+        }
         String[] args = identifier.split("_");
         switch (args[0]) {
             case "crafts":

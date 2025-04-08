@@ -22,6 +22,7 @@
 
 package me.wolfyscript.customcrafting.utils;
 
+import com.wolfyscript.utilities.bukkit.items.CustomItemBlockData;
 import com.wolfyscript.utilities.bukkit.world.items.reference.StackReference;
 import me.wolfyscript.customcrafting.CustomCrafting;
 import me.wolfyscript.customcrafting.data.CCPlayerData;
@@ -136,8 +137,13 @@ public final class CraftManager {
         CCPlayerData playerStore = PlayerUtil.getStore(player);
         playerStore.increaseRecipeCrafts(recipe.getNamespacedKey(), 1);
         playerStore.increaseTotalCrafts(1);
-        var customItem = NamespacedKeyUtils.getCustomItem(inventory.getLocation());
-        if (customItem != null && customItem.getNamespacedKey().equals(CustomCrafting.ADVANCED_CRAFTING_TABLE)) {
+
+        var advanced = customCrafting.getApi().getCore().getPersistentStorage().getOrCreateWorldStorage(player.getWorld())
+            .getBlock(inventory.getLocation())
+            .flatMap(block -> block.getData(CustomItemBlockData.ID, CustomItemBlockData.class))
+            .map(data -> data.getNamespacedKey().equals(CustomCrafting.ADVANCED_CRAFTING_TABLE))
+            .orElse(false);
+        if (advanced) {
             playerStore.increaseAdvancedCrafts(1);
         } else {
             playerStore.increaseNormalCrafts(1);

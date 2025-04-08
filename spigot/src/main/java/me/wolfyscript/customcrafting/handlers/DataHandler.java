@@ -29,7 +29,6 @@ import me.wolfyscript.customcrafting.configs.LocalStorageSettings;
 import me.wolfyscript.customcrafting.configs.MainConfig;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.world.WorldUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Keyed;
 import org.bukkit.event.EventHandler;
@@ -123,7 +122,6 @@ public class DataHandler implements Listener {
     public void loadRecipesAndItems() {
         load();
         configHandler.getRecipeBookConfig().index(customCrafting);
-        WorldUtils.getWorldCustomItemStore().initiateMissingBlockEffects();
     }
 
     public DatabaseLoader getDatabaseLoader() {

@@ -58,13 +58,4 @@ public class GrindstoneData extends RecipeData<CustomRecipeGrindstone> {
         return validItem;
     }
 
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public CustomItem getInputTop() {
-        return getBySlot(0).customItem();
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public CustomItem getInputBottom() {
-        return getBySlot(1).customItem();
-    }
 }

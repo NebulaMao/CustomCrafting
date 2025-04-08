@@ -181,7 +181,6 @@ abstract class CraftingWindow extends CCWindow {
             }
             cacheEliteCraftingTable.setCustomItem(null);
             cacheEliteCraftingTable.setSettings(null);
-            cacheEliteCraftingTable.setCustomItemAndData(null, null);
             cacheEliteCraftingTable.setResult(new ItemStack(Material.AIR));
             cacheEliteCraftingTable.setContents(null);
             cacheEliteCraftingTable.setCurrentGridSize((byte) 0);

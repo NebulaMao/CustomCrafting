@@ -22,20 +22,18 @@
 
 package me.wolfyscript.customcrafting.data;
 
-import me.wolfyscript.lib.com.fasterxml.jackson.core.JsonGenerator;
-import me.wolfyscript.lib.com.fasterxml.jackson.core.type.TypeReference;
-import me.wolfyscript.lib.com.fasterxml.jackson.databind.DeserializationContext;
-import me.wolfyscript.lib.com.fasterxml.jackson.databind.JsonNode;
-import me.wolfyscript.lib.com.fasterxml.jackson.databind.SerializerProvider;
-import me.wolfyscript.utilities.api.WolfyUtilCore;
+import com.wolfyscript.utilities.KeyedStaticId;
+import com.wolfyscript.utilities.bukkit.persistent.player.CustomPlayerData;
+import me.wolfyscript.customcrafting.utils.NamespacedKeyUtils;
 import me.wolfyscript.utilities.util.NamespacedKey;
-import me.wolfyscript.utilities.util.entity.CustomPlayerData;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@KeyedStaticId(CCPlayerData.ID)
 public class CCPlayerData extends CustomPlayerData {
+
+    protected static final String ID = NamespacedKeyUtils.NAMESPACE + ":" + "common_player_data";
 
     private boolean darkMode;
     private int totalCrafts;
@@ -45,6 +43,7 @@ public class CCPlayerData extends CustomPlayerData {
     private Map<NamespacedKey, Integer> crafts;
 
     private CCPlayerData() {
+        super(NamespacedKey.of(ID));
         this.darkMode = false;
         this.totalCrafts = 0;
         this.advancedCrafts = 0;
@@ -113,24 +112,6 @@ public class CCPlayerData extends CustomPlayerData {
     }
 
     @Override
-    public void writeToJson(JsonGenerator gen, SerializerProvider serializerProvider) throws IOException {
-        gen.writeBooleanField("dark_mode", darkMode);
-        gen.writeNumberField("total_crafts", totalCrafts);
-        gen.writeNumberField("advanced_crafts", advancedCrafts);
-        gen.writeNumberField("normal_crafts", normalCrafts);
-        gen.writeObjectField("crafts", crafts);
-    }
-
-    @Override
-    protected void readFromJson(JsonNode node, DeserializationContext deserializationContext) throws IOException {
-        darkMode = node.path("dark_mode").asBoolean(false);
-        totalCrafts = node.path("total_crafts").asInt(0);
-        advancedCrafts = node.path("advanced_crafts").asInt(0);
-        normalCrafts = node.path("normal_crafts").asInt(0);
-        crafts = WolfyUtilCore.getInstance().getWolfyUtils().getJacksonMapperUtil().getGlobalMapper().convertValue(node.path("crafts"), new TypeReference<>() {});
-    }
-
-    @Override
     public String toString() {
         return "CCPlayerData{" +
                 "darkMode=" + darkMode +
@@ -141,10 +122,19 @@ public class CCPlayerData extends CustomPlayerData {
                 "} ";
     }
 
-    public static class Provider extends CustomPlayerData.Provider<CCPlayerData> {
+    @Override
+    public void onLoad() {
 
-        public Provider() {
-            super(new NamespacedKey("customcrafting", "data"), CCPlayerData.class);
-        }
     }
+
+    @Override
+    public void onUnload() {
+
+    }
+
+    @Override
+    public CustomPlayerData copy() {
+        return null;
+    }
+
 }
