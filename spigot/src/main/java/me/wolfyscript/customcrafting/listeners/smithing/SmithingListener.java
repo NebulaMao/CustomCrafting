@@ -63,8 +63,6 @@ public class SmithingListener implements Listener {
     private final HashMap<UUID, SmithingData> preCraftedRecipes = new HashMap<>();
     private final CustomCrafting customCrafting;
 
-    private static final boolean IS_1_20 = ServerVersion.isAfterOrEq(MinecraftVersion.of(1, 20, 0));
-
     public SmithingListener(CustomCrafting customCrafting) {
         this.customCrafting = customCrafting;
     }
@@ -82,7 +80,7 @@ public class SmithingListener implements Listener {
             }
         }
 
-        var template = IS_1_20 ? inv.getItem(0) : null;
+        var template = inv.getItem(0);
         var base = inv.getItem(CustomRecipeSmithing.BASE_SLOT);
         var addition = inv.getItem(CustomRecipeSmithing.ADDITION_SLOT);
         preCraftedRecipes.put(player.getUniqueId(), null);
