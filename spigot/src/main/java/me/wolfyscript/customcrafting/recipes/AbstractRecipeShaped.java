@@ -123,21 +123,6 @@ public abstract class AbstractRecipeShaped<C extends AbstractRecipeShaped<C, S>,
     }
 
     @Deprecated
-    public void setMirrorHorizontal(boolean mirrorHorizontal) {
-        symmetry.setHorizontal(mirrorHorizontal);
-    }
-
-    @Deprecated
-    public void setMirrorVertical(boolean mirrorVertical) {
-        symmetry.setVertical(mirrorVertical);
-    }
-
-    @Deprecated
-    public void setMirrorRotation(boolean mirrorRotation) {
-        symmetry.setRotate(mirrorRotation);
-    }
-
-    @Deprecated
     public boolean mirrorHorizontal() {
         return symmetry.isHorizontal();
     }
@@ -170,7 +155,7 @@ public abstract class AbstractRecipeShaped<C extends AbstractRecipeShaped<C, S>,
      * The shape is shrunk to the smallest possible width and height.<br>
      * Besides the shape, it generates a flat list of the ingredients based on the shrunk shape.<br>
      * <br>
-     * <b>{@link #setMirrorHorizontal(boolean)}, {@link #setMirrorVertical(boolean)}, and {@link #setMirrorRotation(boolean)} must be invoked before this method so their settings have an effect on the generated shape!</b>
+     * <b>{@link #getSymmetry()} must be specified before this method so it has an effect on the generated shape!</b>
      *
      * @param shape The shape of the recipe
      */
@@ -472,7 +457,7 @@ public abstract class AbstractRecipeShaped<C extends AbstractRecipeShaped<C, S>,
         private boolean vertical;
         private boolean rotate;
 
-        Symmetry() {
+        public Symmetry() {
             this.horizontal = false;
             this.vertical = false;
             this.rotate = false;

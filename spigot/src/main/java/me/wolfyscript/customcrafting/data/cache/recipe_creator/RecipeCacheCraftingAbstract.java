@@ -41,17 +41,13 @@ public abstract class RecipeCacheCraftingAbstract<S extends CraftingRecipeSettin
     protected boolean shapeless;
     protected final Map<Integer, Ingredient> ingredients;
     private S settings;
-    private boolean mirrorHorizontal;
-    private boolean mirrorVertical;
-    private boolean mirrorRotation;
+    private AbstractRecipeShaped.Symmetry symmetry;
 
     protected RecipeCacheCraftingAbstract(CustomCrafting customCrafting) {
         super(customCrafting);
         this.shapeless = false;
         this.ingredients = new HashMap<>();
-        this.mirrorHorizontal = false;
-        this.mirrorVertical = false;
-        this.mirrorRotation = false;
+        this.symmetry = new AbstractRecipeShaped.Symmetry();
     }
 
     protected RecipeCacheCraftingAbstract(CustomCrafting customCrafting, CraftingRecipe<?, S> recipe) {
@@ -59,9 +55,7 @@ public abstract class RecipeCacheCraftingAbstract<S extends CraftingRecipeSettin
         this.settings = recipe.getSettings().clone();
         this.shapeless = RecipeType.CRAFTING_SHAPELESS.isInstance(recipe) || RecipeType.ELITE_CRAFTING_SHAPELESS.isInstance(recipe);
         if (recipe instanceof AbstractRecipeShaped<?, ?> shaped) {
-            this.mirrorHorizontal = shaped.mirrorHorizontal();
-            this.mirrorVertical = shaped.mirrorVertical();
-            this.mirrorRotation = shaped.mirrorRotation();
+            this.symmetry = shaped.getSymmetry().copy();
             this.ingredients = new HashMap<>();
             int i = 0;
             int ingredientIndex = 0;
