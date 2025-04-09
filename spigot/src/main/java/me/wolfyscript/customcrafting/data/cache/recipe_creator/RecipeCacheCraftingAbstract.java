@@ -114,28 +114,8 @@ public abstract class RecipeCacheCraftingAbstract<S extends CraftingRecipeSettin
         this.shapeless = shapeless;
     }
 
-    public boolean isMirrorHorizontal() {
-        return mirrorHorizontal;
-    }
-
-    public void setMirrorHorizontal(boolean mirrorHorizontal) {
-        this.mirrorHorizontal = mirrorHorizontal;
-    }
-
-    public boolean isMirrorVertical() {
-        return mirrorVertical;
-    }
-
-    public void setMirrorVertical(boolean mirrorVertical) {
-        this.mirrorVertical = mirrorVertical;
-    }
-
-    public boolean isMirrorRotation() {
-        return mirrorRotation;
-    }
-
-    public void setMirrorRotation(boolean mirrorRotation) {
-        this.mirrorRotation = mirrorRotation;
+    public AbstractRecipeShaped.Symmetry getSymmetry() {
+        return symmetry;
     }
 
     @Override
@@ -144,9 +124,10 @@ public abstract class RecipeCacheCraftingAbstract<S extends CraftingRecipeSettin
         if (craftingRecipe instanceof AbstractRecipeShapeless<?, ?> shapelessRecipe) {
             shapelessRecipe.setIngredients(ingredients.values().stream());
         } else if (craftingRecipe instanceof AbstractRecipeShaped<?, ?> shaped) {
-            shaped.setMirrorHorizontal(isMirrorHorizontal());
-            shaped.setMirrorVertical(isMirrorVertical());
-            shaped.setMirrorRotation(isMirrorRotation());
+            var symmetry = shaped.getSymmetry();
+            symmetry.setHorizontal(symmetry.isHorizontal());
+            symmetry.setVertical(symmetry.isVertical());
+            symmetry.setRotate(symmetry.isRotate());
             Map<Character, Ingredient> ingredientMap = ingredients.entrySet().stream().filter(entry -> entry.getValue() != null && !entry.getValue().isEmpty()).collect(Collectors.toMap(entry -> CraftingRecipe.LETTERS.charAt(entry.getKey()), Map.Entry::getValue));
             shaped.generateMissingShape(List.copyOf(ingredientMap.keySet()));
             shaped.setIngredients(ingredientMap);

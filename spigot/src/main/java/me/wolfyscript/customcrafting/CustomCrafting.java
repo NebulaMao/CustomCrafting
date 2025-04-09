@@ -194,7 +194,6 @@ public class CustomCrafting extends JavaPlugin {
         ConfigurationSerialization.registerClass(LocalStorageSettings.class, "customcrafting:local_storage_settings");
 
         getLogger().info("Registering CustomItem Data");
-
         var customItemDataTypes = api.getRegistries().getCustomItemDataTypeRegistry();
         customItemDataTypes.register(RecipeBookSettings.class);
         customItemDataTypes.register(EliteCraftingTableSettings.class);
@@ -203,6 +202,7 @@ public class CustomCrafting extends JavaPlugin {
         var customBlockData = api.getRegistries().getCustomBlockData();
         customBlockData.register(CauldronBlockData.ID, CauldronBlockData.class);
 
+        getLogger().info("Registering Player Data");
         var customPlayerData = api.getRegistries().getCustomPlayerData();
         customPlayerData.register(CCPlayerData.class);
 

@@ -210,59 +210,6 @@ public class Result extends RecipeItemStack {
         return chosenItem.referencedStack();
     }
 
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public RandomCollection<CustomItem> getRandomChoices(@Nullable Player player) {
-        return (player == null ? getChoices() : getChoices(player)).stream().collect(RandomCollection.getCollector((rdmCollection, customItem) -> rdmCollection.add(customItem.getWeight(), customItem)));
-    }
-
-    /**
-     * @param player The player to get the result for.
-     * @return The optional {@link CustomItem} for that player. This might be a cached Item if the player hasn't taken it out previously.
-     */
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public Optional<CustomItem> getItem(@Nullable Player player) {
-        return item(player).map(StackReference::convertToLegacy);
-    }
-
-    /**
-     * @param block The {@link Block} to get the result for.
-     * @return The optional {@link CustomItem} for that block. This might be a cached Item if the block failed to processed it.
-     */
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public Optional<CustomItem> getItem(@NotNull Block block) {
-        return item(block).map(StackReference::convertToLegacy);
-    }
-
-    /**
-     * Combination of {@link #getItem(Player)} and {@link #getItem(Block)}.
-     * <p>
-     * If the player is available it returns the item for the player.
-     * <br>
-     * If the player is null, but the block is available it returns the item for the block.
-     * </p>
-     *
-     * @param player The player to get the result for.
-     * @param block  The {@link Block} to get the result for.
-     * @return Either the item for the player or block, depending on which one is available.
-     */
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public Optional<CustomItem> getItem(@Nullable Player player, @Nullable Block block) {
-        return item(player, block).map(StackReference::convertToLegacy);
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public ItemStack getItem(RecipeData<?> recipeData, @Nullable Player player, @Nullable Block block) {
-        return item(recipeData, player, block);
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public ItemStack getItem(RecipeData<?> recipeData, CustomItem chosenItem, @Nullable Player player, @Nullable Block block) {
-        if (target != null) {
-            return target.merge(recipeData, player, block, chosenItem, chosenItem.create());
-        }
-        return chosenItem.create();
-    }
-
     private void addCachedReference(Player player, StackReference reference) {
         if (player != null) {
             if (reference == null) {

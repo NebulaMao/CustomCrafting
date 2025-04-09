@@ -83,16 +83,6 @@ public class Ingredient extends RecipeItemStack {
         super(references);
     }
 
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public Ingredient(APIReference... references) {
-        super(Arrays.stream(references).map(APIReference::convertToStackReference).toArray(StackReference[]::new));
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public Ingredient(@JsonProperty("items") List<APIReference> items, @JsonProperty("tags") Set<NamespacedKey> tags) {
-        super(items.stream().map(APIReference::convertToStackReference).toList(), tags);
-    }
-
     public boolean isReplaceWithRemains() {
         return replaceWithRemains;
     }
@@ -117,12 +107,6 @@ public class Ingredient extends RecipeItemStack {
     public boolean test(ItemStack itemStack, boolean exactMatch) {
         if (itemStack == null) return false;
         return oldChoices.stream().anyMatch(customItem -> customItem.isSimilar(itemStack, exactMatch));
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public Optional<CustomItem> check(ItemStack itemStack, boolean exactMatch) {
-        if (itemStack == null) return Optional.empty();
-        return oldChoices.stream().filter(customItem -> customItem.isSimilar(itemStack, exactMatch)).findFirst();
     }
 
     public Optional<StackReference> checkChoices(ItemStack itemStack, boolean exactMatch) {

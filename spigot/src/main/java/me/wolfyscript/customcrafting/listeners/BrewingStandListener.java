@@ -27,6 +27,8 @@ import de.tr7zw.nbtapi.NBTTileEntity;
 import me.wolfyscript.customcrafting.CustomCrafting;
 import me.wolfyscript.customcrafting.recipes.CustomRecipeBrewing;
 import me.wolfyscript.customcrafting.recipes.RecipeType;
+import me.wolfyscript.customcrafting.recipes.brewing.EffectAddition;
+import me.wolfyscript.customcrafting.recipes.brewing.EffectSettingsUpgrade;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.util.Pair;
 import me.wolfyscript.utilities.util.inventory.InventoryUtils;
@@ -211,15 +213,19 @@ public class BrewingStandListener implements Listener {
                                                                     //Add the global effect changes
                                                                     int duration = effect.getDuration() + recipe.getDurationChange();
                                                                     int amplifier = effect.getAmplifier() + recipe.getAmplifierChange();
-                                                                    if (recipe.getEffectUpgrades().containsKey(effect.getType())) {
+                                                                    for (EffectSettingsUpgrade upgrade : recipe.getEffectUpgradeSettings()) {
+                                                                        if (upgrade.getEffectType() != effect.getType()) {
+                                                                            continue;
+                                                                        }
                                                                         //Add the effect specific upgrades
-                                                                        Pair<Integer, Integer> values = recipe.getEffectUpgrades().get(effect.getType());
-                                                                        amplifier = amplifier + values.getKey();
-                                                                        duration = duration + values.getValue();
+                                                                        amplifier = amplifier + upgrade.getAmplifier();
+                                                                        duration = duration + upgrade.getDuration();
                                                                     }
                                                                     potionMeta.addCustomEffect(new PotionEffect(effect.getType(), duration, amplifier, effect.isAmbient(), effect.hasParticles(), effect.hasIcon()), true);
                                                                 }
-                                                                recipe.getEffectAdditions().forEach(potionMeta::addCustomEffect);
+                                                                for (EffectAddition addition : recipe.getEffectAdditionSettings()) {
+                                                                    potionMeta.addCustomEffect(addition.getEffect(), addition.isReplace());
+                                                                }
                                                             }
                                                             if (recipe.getEffectColor() != null) {
                                                                 potionMeta.setColor(recipe.getEffectColor());

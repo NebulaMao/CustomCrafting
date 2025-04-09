@@ -141,11 +141,6 @@ public class ChatUtils {
         return null;
     }
 
-    @Deprecated
-    public static void sendLoreManager(Player player) {
-        createLoreChatEditor(api.getInventoryAPI(CCCache.class)).send(player);
-    }
-
     public static CollectionEditor<CCCache, String> createLoreChatEditor(InventoryAPI<CCCache> invAPI) {
         return new CollectionEditor<CCCache, String>(invAPI,
                 (guiHandler, player, cache) -> {

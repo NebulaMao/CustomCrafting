@@ -196,18 +196,6 @@ public class Conditions {
             return new Data(block);
         }
 
-        @Deprecated
-        public static Data of(@Nullable Player player, @NotNull Block block, @Nullable InventoryView inventoryView) {
-            Data data = player == null ? of(block) : of(player);
-            if (inventoryView != null) data.setInventoryView(inventoryView);
-            return data;
-        }
-
-        @Deprecated
-        public static Data of(@NotNull Block block, @Nullable InventoryView inventoryView) {
-            return inventoryView == null ? of(block) : of(block).setInventoryView(inventoryView);
-        }
-
         public static Data of(@Nullable Player player, @Nullable InventoryView inventoryView) {
             Data data;
             Block block = null;

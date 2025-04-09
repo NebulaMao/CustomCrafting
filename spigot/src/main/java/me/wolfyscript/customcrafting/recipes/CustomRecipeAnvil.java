@@ -104,9 +104,9 @@ public class CustomRecipeAnvil extends CustomRecipe<CustomRecipeAnvil> {
     private RepairCostMode repairCostMode;
 
     @DependencySource
-    private Ingredient base;
+    final private Ingredient base;
     @DependencySource
-    private Ingredient addition;
+    final private Ingredient addition;
 
     public CustomRecipeAnvil(NamespacedKey namespacedKey, JsonNode node) {
         super(namespacedKey, node);
@@ -127,7 +127,16 @@ public class CustomRecipeAnvil extends CustomRecipe<CustomRecipeAnvil> {
             }
         };
         this.result = new Result();
-        readInput(node);
+
+        // Load the old or new input nodes
+        if (node.has("input_left") || node.has("input_right")) {
+            this.base = ItemLoader.loadIngredient(node.path("input_left"));
+            this.addition = ItemLoader.loadIngredient(node.path("input_right"));
+        } else {
+            this.base = ItemLoader.loadIngredient(node.path("base"));
+            this.addition = ItemLoader.loadIngredient(node.path("addition"));
+        }
+
         this.blockEnchant = node.path("block_enchant").asBoolean(false);
         this.blockRename = node.path("block_rename").asBoolean(false);
         this.blockRepair = node.path("block_repair").asBoolean(false);
@@ -171,16 +180,6 @@ public class CustomRecipeAnvil extends CustomRecipe<CustomRecipeAnvil> {
         this.blockEnchant = recipe.blockEnchant;
         this.blockRename = recipe.blockRename;
         this.blockRepair = recipe.blockRepair;
-    }
-
-    private void readInput(JsonNode node) {
-        if (node.has("input_left") || node.has("input_right")) {
-            setBase(ItemLoader.loadIngredient(node.path("input_left")));
-            setAddition(ItemLoader.loadIngredient(node.path("input_right")));
-        } else {
-            setBase(ItemLoader.loadIngredient(node.path("base")));
-            setAddition(ItemLoader.loadIngredient(node.path("addition")));
-        }
     }
 
     public void setRepairTask(RepairTask repairTask) {
@@ -302,18 +301,6 @@ public class CustomRecipeAnvil extends CustomRecipe<CustomRecipeAnvil> {
 
     public void setRepairCostMode(RepairCostMode repairCostMode) {
         this.repairCostMode = repairCostMode;
-    }
-
-    @Deprecated(forRemoval = true)
-    @JsonIgnore
-    public void setBase(@NotNull Ingredient base) {
-        this.base = base;
-    }
-
-    @Deprecated(forRemoval = true)
-    @JsonIgnore
-    public void setAddition(@NotNull Ingredient addition) {
-        this.addition = addition;
     }
 
     @Override

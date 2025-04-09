@@ -95,36 +95,6 @@ public abstract class ElementOption<O, C> {
         this.exclude = exclude;
     }
 
-    @Deprecated(forRemoval = true)
-    public Optional<ValueProvider<Integer>> index() {
-        return Optional.ofNullable(indices.get(0));
-    }
-
-    @Deprecated(forRemoval = true)
-    @JsonIgnore
-    public void setIndex(ValueProvider<Integer> index) {
-        if (indices.isEmpty()) {
-            indices.add(index);
-        } else {
-            this.indices.set(0, index);
-        }
-    }
-
-    @Deprecated(forRemoval = true)
-    public Optional<ValueProvider<C>> value() {
-        return Optional.ofNullable(!values.isEmpty() ? values.get(0) : null);
-    }
-
-    @Deprecated(forRemoval = true)
-    @JsonIgnore
-    public void setValue(ValueProvider<C> value) {
-        if (values.isEmpty()) {
-            values.add(value);
-        } else {
-            this.values.set(0, value);
-        }
-    }
-
     public abstract boolean isEqual(O value, EvalContext evalContext);
 
     public List<O> readFromSource(List<O> source, EvalContext evalContext) {

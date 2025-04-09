@@ -392,7 +392,7 @@ public class CustomRecipeCauldron extends CustomRecipe<CustomRecipeCauldron> {
         int startSlot = 9 / (conditions.size() + 1);
         int slot = 0;
         for (Condition<?> condition : conditions) {
-            event.setButton(36 + startSlot + slot, new NamespacedKey(ClusterRecipeBook.KEY, "conditions." + condition.getId()));
+            event.setButton(36 + startSlot + slot, new NamespacedKey(ClusterRecipeBook.KEY, "conditions." + condition.getNamespacedKey().toString()));
             slot += 2;
         }
 

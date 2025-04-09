@@ -34,11 +34,6 @@ import java.util.Objects;
 
 public class ElementOptionComponentBukkit extends ElementOption<String, String> {
 
-    @Deprecated(forRemoval = true)
-    public boolean isEqual(String value, EvalContext evalContext, MiniMessage miniMessage, TagResolver... tagResolvers) {
-        return isComponentEqual(value, evalContext, miniMessage, tagResolvers);
-    }
-
     public boolean isComponentEqual(String value, EvalContext evalContext, MiniMessage miniMessage, TagResolver... tagResolvers) {
         for (ValueProvider<String> valueProvider : values()) {
             if (Objects.equals(miniMessage.deserialize(valueProvider.getValue(evalContext), tagResolvers), BukkitComponentSerializer.legacy().deserialize(value))) {

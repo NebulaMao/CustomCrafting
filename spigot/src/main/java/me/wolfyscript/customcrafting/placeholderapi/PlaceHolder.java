@@ -33,6 +33,7 @@ import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class PlaceHolder extends PlaceholderExpansion {
 
@@ -61,16 +62,19 @@ public class PlaceHolder extends PlaceholderExpansion {
      *
      * @return The identifier in {@code %<identifier>_<value>%} as String.
      */
+    @NotNull
     @Override
     public String getIdentifier() {
         return "customcrafting";
     }
 
+    @NotNull
     @Override
     public String getAuthor() {
         return customCrafting.getDescription().getAuthors().toString();
     }
 
+    @NotNull
     @Override
     public String getVersion() {
         return customCrafting.getDescription().getVersion();

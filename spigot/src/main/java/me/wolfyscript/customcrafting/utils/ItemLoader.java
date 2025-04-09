@@ -112,19 +112,6 @@ public class ItemLoader {
     }
 
     /**
-     * Loads the result from the specified node
-     *
-     * @param node The JsonNode to read the result from.
-     * @return The loaded result or a new Result instance.
-     * @deprecated {@link #loadResult(JsonNode, CustomCrafting)} should be used instead if possible!
-     */
-    @NotNull
-    @Deprecated
-    public static Result loadResult(JsonNode node) {
-        return loadResult(node, CustomCrafting.inst());
-    }
-
-    /**
      * Loads the {@link Result} from the specified node.
      *
      * @param node           The JsonNode to read from.

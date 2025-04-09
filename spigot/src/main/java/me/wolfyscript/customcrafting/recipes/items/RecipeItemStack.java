@@ -162,30 +162,6 @@ public abstract class RecipeItemStack {
         return items;
     }
 
-    @JsonIgnore
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public List<APIReference> getItems() {
-        return items.stream().map(StackReference::convert).collect(Collectors.toList());
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public void setItems(List<APIReference> items) {
-        this.items = items.stream().map(APIReference::convertToStackReference).collect(Collectors.toList());
-    }
-
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public void put(int variantSlot, CustomItem variant) {
-        if (this.items.size() > variantSlot) {
-            if (variant != null) {
-                this.items.set(variantSlot, variant.stackReference());
-            } else {
-                this.items.remove(variantSlot);
-            }
-        } else if (variant != null) {
-            this.items.add(variant.stackReference());
-        }
-    }
-
     public void put(int variantSlot, StackReference variant) {
         if (this.items.size() > variantSlot) {
             if (variant != null) {
@@ -261,30 +237,6 @@ public abstract class RecipeItemStack {
             }
         }
         return ItemUtils.AIR;
-    }
-
-    @JsonIgnore
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public List<CustomItem> getChoices() {
-        return new ArrayList<>(oldChoices);
-    }
-
-    @JsonIgnore
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public List<CustomItem> getChoices(Player player) {
-        return getChoicesStream().filter(customItem -> !customItem.hasPermission() || player.hasPermission(customItem.getPermission())).toList();
-    }
-
-    @JsonIgnore
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public Stream<CustomItem> getChoicesStream() {
-        return oldChoices.stream();
-    }
-
-    @JsonIgnore
-    @Deprecated(forRemoval = true, since = "4.16.9")
-    public List<ItemStack> getBukkitChoices() {
-        return bukkitChoices();
     }
 
     @JsonIgnore

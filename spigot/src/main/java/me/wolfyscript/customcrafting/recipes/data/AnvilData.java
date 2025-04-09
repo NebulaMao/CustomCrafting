@@ -61,13 +61,4 @@ public class AnvilData extends RecipeData<CustomRecipeAnvil> {
         this.usedResult = usedResult;
     }
 
-    @Deprecated
-    public IngredientData getLeftIngredient() {
-        return getBySlot(0);
-    }
-
-    @Deprecated
-    public IngredientData getRightIngredient() {
-        return getBySlot(1);
-    }
 }

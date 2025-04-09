@@ -131,11 +131,6 @@ public abstract class Condition<C extends Condition<C>> implements Keyed {
         return key;
     }
 
-    @Deprecated
-    public String getId() {
-        return key.toString();
-    }
-
     public boolean isApplicable(CustomRecipe<?> recipe) {
         return true;
     }

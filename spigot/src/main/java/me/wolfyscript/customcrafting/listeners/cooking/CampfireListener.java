@@ -53,7 +53,7 @@ import java.util.Optional;
  */
 public class CampfireListener implements Listener {
 
-    private CustomCrafting customCrafting;
+    private final CustomCrafting customCrafting;
 
     public CampfireListener(CustomCrafting customCrafting) {
         this.customCrafting = customCrafting;

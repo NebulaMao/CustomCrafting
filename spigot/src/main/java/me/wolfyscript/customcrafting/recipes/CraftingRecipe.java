@@ -110,11 +110,6 @@ public abstract class CraftingRecipe<C extends CraftingRecipe<C, S>, S extends C
 
     public abstract boolean fitsDimensions(CraftManager.MatrixData matrixData);
 
-    @Deprecated(forRemoval = true, since = "4.17-beta.4")
-    public CraftingData check(CraftManager.MatrixData matrixData) {
-        return checkFor(matrixData).orElse(null);
-    }
-
     public abstract Optional<CraftingData> checkFor(CraftManager.MatrixData matrixData);
 
     /**

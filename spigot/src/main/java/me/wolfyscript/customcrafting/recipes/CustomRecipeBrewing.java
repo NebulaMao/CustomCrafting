@@ -252,13 +252,13 @@ public class CustomRecipeBrewing extends CustomRecipe<CustomRecipeBrewing> {
     }
 
     @JsonIgnore
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.19")
     public Map<PotionEffect, Boolean> getEffectAdditions() {
         return effectAdditions.stream().collect(Collectors.toMap(EffectAddition::getEffect, EffectAddition::isReplace));
     }
 
     @JsonIgnore
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.19")
     public void setEffectAdditions(Map<PotionEffect, Boolean> effectAdditions) {
         this.effectAdditions = effectAdditions.entrySet().stream().map(entry -> new EffectAddition(entry.getKey(), entry.getValue())).collect(Collectors.toList());
     }
@@ -282,7 +282,7 @@ public class CustomRecipeBrewing extends CustomRecipe<CustomRecipeBrewing> {
      * @deprecated
      */
     @JsonIgnore
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.19")
     public Map<PotionEffectType, Pair<Integer, Integer>> getEffectUpgrades() {
         return effectUpgradesByEffectType.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> new Pair<>(entry.getValue().getAmplifier(), entry.getValue().getDuration())));
     }
@@ -291,7 +291,7 @@ public class CustomRecipeBrewing extends CustomRecipe<CustomRecipeBrewing> {
      * @deprecated The upgrades are using their own object now. This method converts it to the new format. Use {@link #setEffectUpgrades(List)} instead!
      */
     @JsonIgnore
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.19")
     public void setEffectUpgrades(Map<PotionEffectType, Pair<Integer, Integer>> effectUpgrades) {
         this.effectUpgradesByEffectType = new HashMap<>();
         this.effectUpgrades = new ArrayList<>();
@@ -324,13 +324,13 @@ public class CustomRecipeBrewing extends CustomRecipe<CustomRecipeBrewing> {
     }
 
     @JsonIgnore
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.19")
     public Map<PotionEffectType, Pair<Integer, Integer>> getRequiredEffects() {
         return requiredEffectsByEffectType.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> new Pair<>(entry.getValue().getAmplifier(), entry.getValue().getDuration())));
     }
 
     @JsonIgnore
-    @Deprecated
+    @Deprecated(forRemoval = true, since = "4.19")
     public void setRequiredEffects(Map<PotionEffectType, Pair<Integer, Integer>> requiredEffects) {
         this.requiredEffectsByEffectType = new HashMap<>();
         this.requiredEffects = new ArrayList<>();

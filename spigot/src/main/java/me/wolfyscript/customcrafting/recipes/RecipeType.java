@@ -266,8 +266,7 @@ public interface RecipeType<C extends CustomRecipe<?>> extends RecipeLoader<C>, 
         CAULDRON,
         GRINDSTONE,
         BREWING_STAND,
-        @Deprecated SMITHING,
-        SMITHING_LEGACY,
+        SMITHING,
         CUSTOM
     }
 

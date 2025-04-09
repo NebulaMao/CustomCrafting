@@ -87,8 +87,6 @@ public class RecipeCacheAnvil extends RecipeCache<CustomRecipeAnvil> {
         anvil.setApplyRepairCost(applyRepairCost);
         anvil.setRepairCostMode(repairCostMode);
         anvil.setDurability(durability);
-        anvil.setBase(base);
-        anvil.setAddition(addition);
         return anvil;
     }
 
