@@ -22,8 +22,6 @@
 
 package me.wolfyscript.customcrafting.utils;
 
-import me.wolfyscript.utilities.util.version.MinecraftVersions;
-import me.wolfyscript.utilities.util.version.ServerVersion;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Levelled;
@@ -31,7 +29,7 @@ import org.bukkit.block.data.Levelled;
 public class CauldronUtils {
 
     public static boolean isCauldron(Material type) {
-        return type.equals(Material.CAULDRON) || (ServerVersion.isAfterOrEq(MinecraftVersions.v1_17) && (type.equals(Material.WATER_CAULDRON) || type.equals(Material.LAVA_CAULDRON)));
+        return type.equals(Material.CAULDRON) || type.equals(Material.WATER_CAULDRON) || type.equals(Material.LAVA_CAULDRON);
     }
 
     public static int getLevel(Block block) {
