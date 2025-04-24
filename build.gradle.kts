@@ -46,7 +46,7 @@ dependencies {
     compileOnly(project(":spigot"))
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_17
+java.sourceCompatibility = JavaVersion.VERSION_21
 
 tasks.named<ShadowJar>("shadowJar") {
     archiveClassifier.set("")
