@@ -22,7 +22,7 @@ nbtapi = "2.14.1"
 mythic = "5.3.5"
 placeholderapi = "2.11.6"
 oraxen = "1.170.0"
-protocollib = "5.1.0"
+protocollib = "5.3.0"
 
 ## Testing
 junit-jupiter = "5.8.2"
