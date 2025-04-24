@@ -41,8 +41,24 @@ public class PluginCompatibility {
     }
 
     public void init() {
+        checkForProtocolLib();
+        checkForPlaceholderAPI();
+    }
+
+    public void checkForPlaceholderAPI() {
+        if (WolfyUtilities.hasPlugin("PlaceholderAPI")) {
+            plugin.getApi().getConsole().info("$msg.startup.placeholder$");
+            new PlaceHolder(plugin).register();
+        }
+    }
+
+    public void checkForProtocolLib() {
         Plugin protocolLibPlugin = Bukkit.getPluginManager().getPlugin("ProtocolLib");
         if (protocolLibPlugin != null) {
+            if (!protocolLibPlugin.isEnabled()) {
+                plugin.getLogger().warning("Detected ProtocolLib but was not enabled! Skipping ProtocolLib features. Please check for ProtocolLib errors.");
+                return;
+            }
             String verString = protocolLibPlugin.getDescription().getVersion();
             WUVersion version = WUVersion.parse(verString);
             if (version.getMajor() <= 4) {
@@ -57,13 +73,8 @@ public class PluginCompatibility {
                 plugin.getLogger().severe("");
                 return;
             }
-            plugin.getLogger().info("Detected ProtocolLib... initiating additional features.");
+            plugin.getLogger().info("Detected ProtocolLib: initiating additional features.");
             this.protocolLib = new ProtocolLib(plugin);
         }
-        if (WolfyUtilities.hasPlugin("PlaceholderAPI")) {
-            plugin.getApi().getConsole().info("$msg.startup.placeholder$");
-            new PlaceHolder(plugin).register();
-        }
-
     }
 }
