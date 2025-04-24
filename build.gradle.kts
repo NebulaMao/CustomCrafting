@@ -131,7 +131,8 @@ modrinth {
         // scope.type
         // The scope can be `required`, `optional`, `incompatible`, or `embedded`
         // The type can either be `project` or `version`
-        required.project("wolfyutils") // Creates a new required dependency on Fabric API
+        required.project("wolfyutils")
+        required.project("nbtapi")
     }
 }
 
