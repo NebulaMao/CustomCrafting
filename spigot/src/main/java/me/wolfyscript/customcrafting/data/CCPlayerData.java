@@ -51,6 +51,10 @@ public class CCPlayerData extends CustomPlayerData {
         this.crafts = new HashMap<>();
     }
 
+    public static CCPlayerData createDefault() {
+        return new CCPlayerData();
+    }
+
     public boolean isDarkMode() {
         return darkMode;
     }

@@ -28,7 +28,6 @@ import me.wolfyscript.customcrafting.data.CCPlayerData;
 import me.wolfyscript.customcrafting.gui.recipebook.ClusterRecipeBook;
 import me.wolfyscript.utilities.api.WolfyUtilCore;
 import me.wolfyscript.utilities.api.inventory.gui.InventoryAPI;
-import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -40,13 +39,13 @@ public class PlayerUtil {
     private PlayerUtil() {
     }
 
-    public static final NamespacedKey CC_DATA = new NamespacedKey("customcrafting", "data");
-
     public static CCPlayerData getStore(Player player) {
         if (player == null) {
             return null;
         }
-        return WolfyUtilCore.getInstance().getPersistentStorage().getOrCreatePlayerStorage(player).getData(CCPlayerData.class).orElse(null);
+        return WolfyUtilCore.getInstance().getPersistentStorage().getOrCreatePlayerStorage(player)
+            .computeIfAbsent(CCPlayerData.class, (type) -> CCPlayerData.createDefault())
+            .orElseThrow(() -> new IllegalStateException("Failed to get and apply default player data for " + player.getName() + "!"));
     }
 
     public static CCPlayerData getStore(UUID uuid) {
