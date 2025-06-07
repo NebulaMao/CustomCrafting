@@ -24,6 +24,21 @@ Before creating an issue, please go to the wiki. It should clear up frequently a
 
 For any questions join the [Discord](https://discord.gg/qGhDTSr).
 
+> [!warning]
+> 
+> The current focus of development is on **v5**, which will present the **next major version of CustomCrafting**.
+> 
+> Rewritten in Kotlin and for Modded Minecraft, plus cross-platform support.  
+> It'll provide features and fixes bugs, that were impossible to implement or fix in v4,  
+> due to the legacy code-base that was fundamentally broken and outdated.
+>
+> v5 will be the first version with a proper cross-platform API.  
+> (v4 tried to provide an API, but was still too close to the implementation)
+>
+> [More info in the v5 branch](https://github.com/WolfyScript/CustomCrafting/tree/v-5)
+> 
+
+
 ![recipe_types](https://github.com/WolfyScript/CustomCrafting/assets/41468455/f36d3d23-c094-4a47-9b45-370f2f314d21)
 ![customization](https://github.com/WolfyScript/CustomCrafting/assets/41468455/8415f2e3-18cc-49e5-99ae-c910f4c97c56)
 ![advanced_settings](https://github.com/WolfyScript/CustomCrafting/assets/41468455/8d74313c-e5e8-4171-a120-a0b0bd9e2d74)
