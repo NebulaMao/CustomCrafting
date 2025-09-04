@@ -33,9 +33,9 @@
       ]
     },
     {
-      "title": "## ⚙️ CI/CD",
+      "title": "## ⚙️ Build & CI/CD",
       "labels": [
-        "ci", "cd"
+        "ci", "cd", "build"
       ]
     }
   ],
