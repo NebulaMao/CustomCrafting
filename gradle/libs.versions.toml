@@ -22,7 +22,6 @@ nbtapi = "2.14.1"
 mythic = "5.3.5"
 placeholderapi = "2.11.6"
 oraxen = "1.170.0"
-protocollib = "5.3.0"
 
 ## Testing
 junit-jupiter = "5.8.2"
@@ -50,7 +49,6 @@ nbtapi = { module = "de.tr7zw:item-nbt-api-plugin", version.ref = "nbtapi"}
 mythic-dist = { module = "io.lumine:Mythic-Dist", version.ref = "mythic" }
 placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
 oraxen = { module = "io.th0rgal:oraxen", version.ref = "oraxen"}
-protocollib = { module = "com.comphenix.protocol:ProtocolLib", version.ref = "protocollib" }
 
 ## Testing
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }

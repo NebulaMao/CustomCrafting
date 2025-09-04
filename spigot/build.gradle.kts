@@ -44,7 +44,6 @@ repositories {
 }
 
 dependencies {
-    api(libs.protocollib)
     api(libs.bstats)
     compileOnly(libs.mythic.dist)
     compileOnly(libs.io.papermc.paper)
