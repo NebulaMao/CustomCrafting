@@ -16,7 +16,7 @@ minotaur = "2.+"
 jfrog = "5.2.0"
 
 ## Spigot specific dependencies
-papermc = "1.21.5-R0.1-SNAPSHOT"
+papermc = "1.21.8-R0.1-SNAPSHOT"
 wolfyutils = "4.19-SNAPSHOT"
 nbtapi = "2.14.1"
 mythic = "5.3.5"
