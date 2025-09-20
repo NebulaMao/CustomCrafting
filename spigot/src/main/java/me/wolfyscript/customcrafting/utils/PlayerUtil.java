@@ -41,7 +41,7 @@ public class PlayerUtil {
 
     public static CCPlayerData getStore(Player player) {
         if (player == null) {
-            return null;
+            return CCPlayerData.createDefault();
         }
         return WolfyUtilCore.getInstance().getPersistentStorage().getOrCreatePlayerStorage(player)
             .computeIfAbsent(CCPlayerData.class, (type) -> CCPlayerData.createDefault())
