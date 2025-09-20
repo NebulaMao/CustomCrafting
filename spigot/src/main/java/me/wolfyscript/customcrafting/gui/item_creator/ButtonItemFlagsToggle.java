@@ -35,10 +35,22 @@ public class ButtonItemFlagsToggle extends ToggleButton<CCCache> {
         super("flags." + flagId, (cache, guiHandler, player, guiInventory, i) -> {
             return cache.getItems().asBukkitIdentifier().map(identifier -> !ItemUtils.isAirOrNull(identifier.stack()) && identifier.stack().getItemMeta().hasItemFlag(itemFlag)).orElse(false);
         }, new ButtonState<>("flags." + flagId + ".enabled", material, (cache, guiHandler, player, inventory, slot, event) -> {
-            guiHandler.getCustomCache().getItems().modifyOriginalStack(stack -> stack.removeItemFlags(itemFlag));
+            guiHandler.getCustomCache().getItems().modifyOriginalStack(stack -> {
+                var itemMeta = stack.getItemMeta();
+                if (itemMeta != null) {
+                    itemMeta.removeItemFlags(itemFlag);
+                    stack.setItemMeta(itemMeta);
+                }
+            });
             return true;
         }), new ButtonState<>("flags." + flagId + ".disabled", material, (cache, guiHandler, player, inventory, slot, event) -> {
-            guiHandler.getCustomCache().getItems().modifyOriginalStack(stack -> stack.addItemFlags(itemFlag));
+            guiHandler.getCustomCache().getItems().modifyOriginalStack(stack -> {
+                var itemMeta = stack.getItemMeta();
+                if (itemMeta != null) {
+                    itemMeta.addItemFlags(itemFlag);
+                    stack.setItemMeta(itemMeta);
+                }
+            });
             return true;
         }));
     }
