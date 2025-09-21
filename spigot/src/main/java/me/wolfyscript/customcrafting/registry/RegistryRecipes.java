@@ -355,9 +355,9 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
         boolean hasRoot = directory.startsWith("/");
         // Clear the folder, so it is in proper format.
         final String dir = (
-                includeRoot ?
-                        (!hasRoot ? "/" + directory : directory) :
-                        (hasRoot ? directory.substring(1) : directory)
+            includeRoot ?
+                (!hasRoot ? "/" + directory : directory) :
+                (hasRoot ? directory.substring(1) : directory)
         ) + (!directory.endsWith("/") ? "/" : "");
         return dirs(namespace, 64, includeRoot).stream().filter(sub -> sub.startsWith(dir) && (sub.length() != dir.length() || includeRoot)).toList();
     }
@@ -379,7 +379,7 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
      * @return The recipes contained in the group.
      */
     public List<CustomRecipe<?>> getGroup(String group) {
-        return BY_GROUP.computeIfAbsent(group, s -> values().stream().filter(r -> r.getGroup().equals(s)).collect(Collectors.toList()));
+        return BY_GROUP.computeIfAbsent(group, s -> values().stream().filter(r -> r.getGroup().equals(s)).toList());
     }
 
     /**
@@ -396,10 +396,10 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
             get(s).forEach(recipe -> {
                 String key = recipe.getNamespacedKey().getKey();
                 String recipeFolder = "/" + (key.contains("/") ? key.substring(0, key.lastIndexOf("/") + 1) : "");
-                folderIndex.computeIfAbsent(recipeFolder, s1 -> new LinkedList<>()).add(recipe);
+                folderIndex.computeIfAbsent(recipeFolder, s1 -> new ArrayList<>()).add(recipe);
             });
             return folderIndex;
-        }).getOrDefault(dir, new LinkedList<>());
+        }).getOrDefault(dir, new ArrayList<>());
     }
 
     private String cleanDir(String dir) {
@@ -425,7 +425,9 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
      * @return The recipes contained in the namespace.
      */
     public List<CustomRecipe<?>> get(String namespace) {
-        return BY_NAMESPACE.computeIfAbsent(namespace, s -> entrySet().stream().filter(entry -> entry.getKey().getNamespace().equalsIgnoreCase(s)).map(Map.Entry::getValue).collect(Collectors.toList()));
+        return BY_NAMESPACE.computeIfAbsent(namespace, s -> entrySet().stream()
+            .filter(entry -> entry.getKey().getNamespace().equalsIgnoreCase(s))
+            .map(Map.Entry::getValue).collect(Collectors.toUnmodifiableList()));
     }
 
     /**
@@ -433,7 +435,12 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
      */
     @Deprecated(forRemoval = true)
     public List<CustomRecipe<?>> get(CustomItem result) {
-        return get(result.hasNamespacedKey() ? new StackReference(WolfyUtilCore.getInstance(), new WolfyUtilsStackIdentifier(result.getNamespacedKey()), result.getWeight(), result.getAmount(), result.getItemStack()) : result.stackReference());
+        return get(result.hasNamespacedKey() ?
+            new StackReference(
+                WolfyUtilCore.getInstance(),
+                new WolfyUtilsStackIdentifier(result.getNamespacedKey()), result.getWeight(), result.getAmount(), result.getItemStack()
+            ) : result.stackReference()
+        );
     }
 
     /**
@@ -441,12 +448,15 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
      */
     @Deprecated(forRemoval = true)
     public List<CustomRecipe<?>> get(StackReference reference) {
-        return values().stream().filter(recipe -> recipe.getResult().choices().contains(reference)).collect(Collectors.toList());
+        return values().stream().filter(recipe -> recipe.getResult().choices().contains(reference)).toList();
     }
 
     @SuppressWarnings("unchecked")
     public <T extends CustomRecipe<?>> List<T> get(Class<T> type) {
-        return (List<T>) BY_CLASS_TYPE.computeIfAbsent(type, aClass -> values().stream().filter(aClass::isInstance).map(recipe -> ((Class<T>) aClass).cast(recipe)).collect(Collectors.toList()));
+        return (List<T>) BY_CLASS_TYPE.computeIfAbsent(type, aClass -> values().stream()
+            .filter(aClass::isInstance)
+            .map(recipe -> ((Class<T>) aClass).cast(recipe))
+            .collect(Collectors.toUnmodifiableList()));
     }
 
     /**
