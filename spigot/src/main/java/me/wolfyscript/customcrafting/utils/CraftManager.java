@@ -80,6 +80,7 @@ public final class CraftManager {
 
     public Optional<CraftingData> checkCraftingMatrix(MatrixData matrixData, Conditions.Data data, RecipeType.Container.CraftingContainer<?>... types) {
         data.player().ifPresent(player -> remove(player.getUniqueId()));
+        if (!verifyLockdown()) { return Optional.empty(); }
         return customCrafting.getRegistries().getRecipes().get(types)
                 .sorted() // Possibility for parallel stream when enough recipes are registered to amortize the overhead. (Things like the PreCraftEvent might interfere. TODO: Experimental Feature)
                 .flatMap(recipe -> tryRecipe(recipe, matrixData, data).stream())
@@ -104,7 +105,6 @@ public final class CraftManager {
      * @return Optional consisting of the {@link CraftingData}, or empty if the recipe doesn't match.
      */
     public Optional<CraftingData> tryRecipe(CraftingRecipe<?, ?> recipe, MatrixData matrixData, Conditions.Data data) {
-        if (!verifyLockdown()) { return Optional.empty(); }
         if (!recipe.checkConditions(data)) {
             return Optional.empty(); //No longer call Event if recipe is disabled or invalid!
         }
