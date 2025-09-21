@@ -45,7 +45,7 @@ public class CraftListener implements Listener {
         if(customCrafting.getConfigHandler().getConfig().isIaFix()) {
             HandlerList handlerList = PrepareItemCraftEvent.getHandlerList();
             for (RegisteredListener rl : handlerList.getRegisteredListeners()) {
-                if (rl.getListener().getClass().getCanonicalName().contains("itemsadder")) {
+                if (rl.getListener().getClass().getPackageName().contains("itemsadder")) {
                     if (rl.getPriority() == EventPriority.MONITOR) {
                         RegisteredListener newRl = new RegisteredListener(rl.getListener(), rl.getExecutor(), EventPriority.HIGHEST, rl.getPlugin(), rl.isIgnoringCancelled());
                         handlerList.unregister(rl);
