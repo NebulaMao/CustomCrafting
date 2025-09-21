@@ -160,7 +160,7 @@ public class LocalStorageLoader extends ResourceLoader {
         } else {
             customCrafting.getLogger().info(PREFIX + "Using " + processors + " threads");
         }
-        executor = Executors.newWorkStealingPool(processors);
+        executor = Executors.newFixedThreadPool(processors);
         api.getConsole().info(PREFIX + "Looking through data folder...");
         String[] dirs = DATA_FOLDER.list();
         if (dirs != null) {
@@ -173,7 +173,6 @@ public class LocalStorageLoader extends ResourceLoader {
             api.getConsole().info(PREFIX + "$msg.startup.recipes.recipes$");
             new NewDataLoader(dirs).load();
             //Loading old & legacy recipes
-            //The recipes are only loaded if they are not already loaded in previous stages! So if a new version of a recipe exists, then the older ones are ignored.
             new OldDataLoader(dirs).load();
             new LegacyDataLoader(dirs).load();
 
@@ -195,6 +194,8 @@ public class LocalStorageLoader extends ResourceLoader {
                 e.printStackTrace();
                 return;
             }
+            customCrafting.getRegistries().getRecipes().updateCache();
+
             stopWatch.stop();
             int recipeCount = customCrafting.getRegistries().getRecipes().values().size();
             api.getConsole().getLogger().info(String.format(LOG_LOADED_RECIPES, recipeCount, stopWatch.getTime(TimeUnit.MILLISECONDS)));
@@ -213,6 +214,8 @@ public class LocalStorageLoader extends ResourceLoader {
 
     @Override
     protected int validatePending(PluginIntegration pluginIntegration) {
+        var validRecipes = new ArrayList<CustomRecipe<?>>(recipeDependencies.size());
+
         for (CustomRecipe<?> customRecipe : recipeDependencies.keySet()) {
             Collection<Dependency> dependencies = recipeDependencies.get(customRecipe);
 
@@ -224,10 +227,11 @@ public class LocalStorageLoader extends ResourceLoader {
             validateRecipe(customRecipe).ifPresentOrElse(container -> {
                 switch (container.type()) {
                     case INVALID -> markInvalid(container);
-                    case VALID -> customCrafting.getRegistries().getRecipes().register(customRecipe);
+                    case VALID -> validRecipes.add(customRecipe);
                 }
-            }, () -> customCrafting.getRegistries().getRecipes().register(customRecipe));
+            }, () -> validRecipes.add(customRecipe));
         }
+        customCrafting.getRegistries().getRecipes().bulkRegister(validRecipes);
         return 0;
     }
 
@@ -410,21 +414,27 @@ public class LocalStorageLoader extends ResourceLoader {
         return false;
     }
 
-    private void checkDependenciesAndRegister(CustomRecipe<?> recipe) {
-        Set<Dependency> dependencies = DependencyResolver.resolveDependenciesFor(recipe, recipe.getClass());
-        dependencies.removeIf(Dependency::isAvailable);
-        if (!dependencies.isEmpty()) {
-            recipeDependencies.putAll(recipe, dependencies);
-            return;
-        }
-
-        // Verify and register recipe
-        validateRecipe(recipe).ifPresentOrElse(container -> {
-            switch (container.type()) {
-                case INVALID -> markInvalid(container);
-                case VALID -> customCrafting.getRegistries().getRecipes().register(recipe);
+    private void checkDependenciesAndRegister(List<CustomRecipe<?>> recipes) {
+        customCrafting.getLogger().info("Registering " + recipes.size() + " recipes");
+        var filteredRecipes = recipes.stream().filter(recipe -> {
+            Set<Dependency> dependencies = DependencyResolver.resolveDependenciesFor(recipe, recipe.getClass());
+            dependencies.removeIf(Dependency::isAvailable);
+            if (!dependencies.isEmpty()) {
+                recipeDependencies.putAll(recipe, dependencies);
+                return false;
             }
-        }, () -> customCrafting.getRegistries().getRecipes().register(recipe));
+            // Verify and register recipe
+            return validateRecipe(recipe).map(result -> switch (result.type()) {
+                case INVALID -> {
+                    markInvalid(result);
+                    yield false;
+                }
+                case VALID -> true;
+                default -> false;
+            }).orElse(true);
+        }).toList();
+        customCrafting.getLogger().info("Bulk register " + filteredRecipes.size() + " recipes");
+        customCrafting.getRegistries().getRecipes().bulkRegister(filteredRecipes);
     }
 
     /**
@@ -501,8 +511,7 @@ public class LocalStorageLoader extends ResourceLoader {
                             injectableValues.addValue("customcrafting", customCrafting);
 
                             CustomRecipe<?> recipe = objectMapper.reader(injectableValues).forType(recipeTypeRef).readValue(file.toFile());
-                            checkDependenciesAndRegister(recipe);
-
+                            customCrafting.getRegistries().getRecipes().registerNoUpdate(namespacedKey, recipe);
                         } catch (IOException e) {
                             markFailed(namespacedKey);
 
@@ -582,7 +591,7 @@ public class LocalStorageLoader extends ResourceLoader {
                     executeTask(() -> {
                         try {
                             CustomRecipe<?> recipe = loader.getInstance(namespacedKey, objectMapper.readTree(file));
-                            checkDependenciesAndRegister(recipe);
+                            customCrafting.getRegistries().getRecipes().registerNoUpdate(namespacedKey, recipe);
                         } catch (IOException | InstantiationException | InvocationTargetException | NoSuchMethodException |
                                  IllegalAccessException e) {
                             ChatUtils.sendRecipeItemLoadingError("[LOCAL_OLD] ", namespacedKey.getNamespace(), namespacedKey.getKey(), e);

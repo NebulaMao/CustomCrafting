@@ -28,6 +28,7 @@ import me.wolfyscript.customcrafting.data.CCCache;
 import me.wolfyscript.customcrafting.gui.recipebook.ClusterRecipeBook;
 import me.wolfyscript.customcrafting.gui.recipebook.MenuCategoryOverview;
 import me.wolfyscript.customcrafting.gui.recipebook.MenuRecipeOverview;
+import me.wolfyscript.customcrafting.recipes.CustomRecipe;
 import me.wolfyscript.customcrafting.registry.RegistryRecipes;
 import me.wolfyscript.customcrafting.utils.ChatUtils;
 import me.wolfyscript.customcrafting.utils.NamespacedKeyUtils;
@@ -36,6 +37,7 @@ import me.wolfyscript.lib.net.kyori.adventure.text.TextComponent;
 import me.wolfyscript.lib.net.kyori.adventure.text.format.NamedTextColor;
 import me.wolfyscript.utilities.api.WolfyUtilities;
 import me.wolfyscript.utilities.registry.RegistryCustomItem;
+import me.wolfyscript.utilities.util.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -64,7 +66,7 @@ public class ReloadSubCommand extends AbstractSubCommand {
         sendMessage(sender, Component.text("Unloading Recipes...", NamedTextColor.YELLOW));
         //Unregister recipes
         RegistryRecipes registryRecipes = customCrafting.getRegistries().getRecipes();
-        registryRecipes.get(NamespacedKeyUtils.NAMESPACE).forEach(customRecipe -> registryRecipes.remove(customRecipe.getNamespacedKey()));
+        registryRecipes.removeAll(registryRecipes.get(NamespacedKeyUtils.NAMESPACE).stream().map(CustomRecipe::getNamespacedKey).toArray(NamespacedKey[]::new));
         sendMessage(sender, Component.text("Unloading Items...", NamedTextColor.YELLOW));
         //Unregister items
         RegistryCustomItem registryCustomItem = customCrafting.getApi().getRegistries().getCustomItems();

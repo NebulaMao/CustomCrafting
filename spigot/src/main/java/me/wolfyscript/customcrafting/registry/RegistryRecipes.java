@@ -59,11 +59,9 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
 
     private final Map<String, List<CustomRecipe<?>>> BY_NAMESPACE = new HashMap<>();
     private final Map<String, List<CustomRecipe<?>>> BY_GROUP = new HashMap<>();
-    private final Map<StackReference, List<CustomRecipe<?>>> BY_RESULT = new HashMap<>();
     private final Map<Class<?>, List<CustomRecipe<?>>> BY_CLASS_TYPE = new HashMap<>();
     private final Map<RecipeType<?>, List<CustomRecipe<?>>> BY_RECIPE_TYPE = new HashMap<>();
     private final Map<RecipeType.Container<?>, List<CustomRecipe<?>>> BY_RECIPE_TYPE_CONTAINER = new HashMap<>();
-    private final Map<String, Map<String, List<CustomRecipe<?>>>> BY_NAMESPACE_AND_FOLDER = new HashMap<>();
     private final Map<String, Map<String, List<CustomRecipe<?>>>> BY_NAMESPACE_AND_DIR = new HashMap<>();
     private final Set<String> NAMESPACES = new HashSet<>();
     private final Map<String, List<String>> FOLDERS = new HashMap<>();
@@ -78,12 +76,27 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
         return this.map.containsKey(namespacedKey);
     }
 
+    public void removeAll(NamespacedKey... keys) {
+        for (NamespacedKey key : keys) {
+            removeNoUpdate(key);
+        }
+        updateCache(namespacedKey);
+    }
+
     public void remove(NamespacedKey namespacedKey) {
+        removeNoUpdate(namespacedKey);
+        updateCache(namespacedKey);
+    }
+
+    private void removeNoUpdate(NamespacedKey namespacedKey) {
         if (get(namespacedKey) instanceof ICustomVanillaRecipe) {
             removeBukkitRecipe(namespacedKey);
         }
         this.map.remove(namespacedKey);
-        clearCache(namespacedKey);
+    }
+
+    public void updateCache() {
+        updateCache(new NamespacedKey[0]);
     }
 
     /**
@@ -93,27 +106,53 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
      * Of course, you could check if the specific caches must be cleared, but that would be at the cost of register/remove performance.<br>
      * (Most servers have a fixed set of recipes that they use and don't frequently change in production... well at least they shouldn't)
      *
-     * @param key The key of the recipe that caused the reset.
+     * @param keys The key of the recipe that caused the reset.
      */
-    private void clearCache(NamespacedKey key) {
-        BY_NAMESPACE.remove(key.getNamespace());
+    private void updateCache(NamespacedKey... keys) {
+        for (NamespacedKey key : keys) {
+            BY_NAMESPACE.remove(key.getNamespace());
+            FOLDERS.remove(key.getNamespace());
+            BY_NAMESPACE_AND_DIR.remove(key.getNamespace());
+        }
         BY_GROUP.clear();
         NAMESPACES.clear();
-        FOLDERS.remove(key.getNamespace());
         GROUPS.clear();
-        BY_RESULT.clear();
         BY_CLASS_TYPE.clear();
         BY_RECIPE_TYPE.clear();
+        for (RecipeType<? extends CustomRecipe<?>> type : RecipeType.values()) {
+            BY_RECIPE_TYPE.put(type, values().stream().filter(type::isInstance).toList());
+        }
         BY_RECIPE_TYPE_CONTAINER.clear();
-        BY_NAMESPACE_AND_FOLDER.remove(key.getNamespace());
-        BY_NAMESPACE_AND_DIR.remove(key.getNamespace());
+        for (RecipeType.Container<? extends CustomRecipe<?>> container : RecipeType.Container.values()) {
+            BY_RECIPE_TYPE_CONTAINER.put(container, values().stream().filter(container::isInstance).toList());
+        }
+    }
+
+    public synchronized void bulkRegister(List<CustomRecipe<?>> recipes) {
+        var keys = new NamespacedKey[recipes.size()];
+        for (int i = 0; i < recipes.size(); i++) {
+            var recipe = recipes.get(i);
+            registerNoUpdate(recipe.getNamespacedKey(), recipe);
+            keys[i] = recipe.getNamespacedKey();
+        }
+        updateCache(keys);
     }
 
     @Override
     public synchronized void register(NamespacedKey namespacedKey, CustomRecipe<?> value) {
+        registerNoUpdate(namespacedKey, value);
+        updateCache(namespacedKey);
+    }
+
+    @Override
+    public void register(CustomRecipe<?> value) {
+        this.register(value.getNamespacedKey(), value);
+    }
+
+    public void registerNoUpdate(NamespacedKey namespacedKey, CustomRecipe<?> value) {
         Preconditions.checkArgument(namespacedKey != null, "Invalid NamespacedKey! The namespaced key cannot be null!");
         Preconditions.checkArgument(!namespacedKey.getNamespace().equalsIgnoreCase("minecraft"), "Invalid NamespacedKey! Cannot register recipe under minecraft namespace!");
-        remove(namespacedKey);
+        removeNoUpdate(namespacedKey);
         super.register(namespacedKey, value);
         if (value instanceof ICustomVanillaRecipe<?> vanillaRecipe && !value.isDisabled()) {
             Bukkit.getScheduler().runTask(customCrafting, () -> {
@@ -134,12 +173,6 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
                 }
             });
         }
-        clearCache(namespacedKey);
-    }
-
-    @Override
-    public void register(CustomRecipe<?> value) {
-        this.register(value.getNamespacedKey(), value);
     }
 
     /**
@@ -395,14 +428,20 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
         return BY_NAMESPACE.computeIfAbsent(namespace, s -> entrySet().stream().filter(entry -> entry.getKey().getNamespace().equalsIgnoreCase(s)).map(Map.Entry::getValue).collect(Collectors.toList()));
     }
 
+    /**
+     * @deprecated Not used anywhere and fundamentally flawed. Do not use!
+     */
+    @Deprecated(forRemoval = true)
     public List<CustomRecipe<?>> get(CustomItem result) {
-        return BY_RESULT.computeIfAbsent(
-                result.hasNamespacedKey() ? new StackReference(WolfyUtilCore.getInstance(), new WolfyUtilsStackIdentifier(result.getNamespacedKey()), result.getWeight(), result.getAmount(), result.getItemStack()) : result.stackReference(),
-                item -> values().stream().filter(recipe -> recipe.getResult().choices().contains(item)).collect(Collectors.toList()));
+        return get(result.hasNamespacedKey() ? new StackReference(WolfyUtilCore.getInstance(), new WolfyUtilsStackIdentifier(result.getNamespacedKey()), result.getWeight(), result.getAmount(), result.getItemStack()) : result.stackReference());
     }
 
+    /**
+     * @deprecated Not used anywhere and fundamentally flawed. Do not use!
+     */
+    @Deprecated(forRemoval = true)
     public List<CustomRecipe<?>> get(StackReference reference) {
-        return BY_RESULT.computeIfAbsent(reference, reference1 -> values().stream().filter(recipe -> recipe.getResult().choices().contains(reference1)).collect(Collectors.toList()));
+        return values().stream().filter(recipe -> recipe.getResult().choices().contains(reference)).collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
@@ -417,7 +456,7 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
      */
     @SuppressWarnings("unchecked")
     public <T extends CustomRecipe<?>> List<T> get(RecipeType<T> type) {
-        return (List<T>) BY_RECIPE_TYPE.computeIfAbsent(type, recipeType -> values().stream().filter(recipeType::isInstance).map(recipeType::cast).collect(Collectors.toList()));
+        return (List<T>) BY_RECIPE_TYPE.getOrDefault(type, Collections.emptyList());
     }
 
     /**
@@ -427,7 +466,7 @@ public final class RegistryRecipes extends RegistrySimple<CustomRecipe<?>> {
      */
     @SuppressWarnings("unchecked")
     public <T extends CustomRecipe<?>> List<T> get(RecipeType.Container<T> type) {
-        return (List<T>) BY_RECIPE_TYPE_CONTAINER.computeIfAbsent(type, container -> values().stream().filter(container::isInstance).map(container::cast).collect(Collectors.toList()));
+        return (List<T>) BY_RECIPE_TYPE_CONTAINER.getOrDefault(type, Collections.emptyList());
     }
 
     @SafeVarargs

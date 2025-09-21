@@ -148,6 +148,7 @@ public class SQLDatabaseLoader extends DatabaseLoader {
         skippedError.clear();
         skippedAlreadyExisting.clear();
         api.getConsole().info(PREFIX + "$msg.startup.recipes.recipes$");
+        var recipes = new ArrayList<CustomRecipe<?>>();
         try (PreparedStatement recipesQuery = dataBase.open().prepareStatement("SELECT * FROM customcrafting_recipes")) {
             ResultSet resultSet = recipesQuery.executeQuery();
             if (resultSet == null) {
@@ -160,7 +161,7 @@ public class SQLDatabaseLoader extends DatabaseLoader {
                 if (isReplaceData() || !customCrafting.getRegistries().getRecipes().has(namespacedKey)) {
                     CustomRecipe<?> recipe = getRecipe(namespacedKey);
                     if (recipe != null) {
-                        customCrafting.getRegistries().getRecipes().register(recipe);
+                        recipes.add(recipe);
                         loaded.add(namespacedKey);
                     } else {
                         skippedError.add(namespacedKey);
@@ -174,6 +175,7 @@ public class SQLDatabaseLoader extends DatabaseLoader {
         } finally {
             dataBase.close();
         }
+        customCrafting.getRegistries().getRecipes().bulkRegister(recipes);
         api.getConsole().getLogger().info(String.format(PREFIX + "Loaded %d recipes; Skipped: %d error/s, %d already existing", loaded.size(), skippedError.size(), skippedAlreadyExisting.size()));
     }
 
